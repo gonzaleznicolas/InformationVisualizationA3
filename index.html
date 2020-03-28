@@ -17,6 +17,11 @@
         stroke: black;
         shape-rendering: crispEdges;
     }
+
+    .countries{
+        stroke: white;
+        stroke-width: 0.3;
+    }
 </style>
 <body>
 <script src="d3.js"></script>
@@ -103,11 +108,12 @@
                 .attr("class", d => { return "COUNTRY-CODE-"+d.id;} )
 				.attr('d', path)
 				.style('fill', d => color(fertilityById[d.id]))
-				.style('stroke', 'white')
 				.style('opacity', 0.8)
-				.style('stroke-width', 0.3)
-				.on('mouseover',function(d){})
-				.on('mouseout', function(d){});
+				.on('click', function(d){
+                    let country = d3.selectAll(".COUNTRY-CODE-"+d.id);
+                    country.attr("stroke-width", "1");
+                    country.attr("stroke", "black");
+                });
 
 		svg.append('path')
 				.datum(topojson.mesh(countries.features, (a, b) => a.id !== b.id))
@@ -159,7 +165,7 @@
         scatterplot.selectAll(".dot")
             .data(who)
             .enter().append("circle")
-            .attr("class", d => { return "dot COUNTRY-"+d.Country; } )
+            .attr("class", d => { return "dot COUNTRY-CODE-"+d.id; } )
             .attr("r", 3.5)
             .attr("cx", xMap)
             .attr("cy", yMap)
