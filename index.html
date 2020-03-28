@@ -116,6 +116,7 @@
     let gX;
     let gY;
 
+    let countryMarkers;
 
     Promise.all([
         d3.csv('who.csv'),
@@ -218,7 +219,7 @@
             .attr("visibility", "visible");
 
         // countries on scatterplot 
-        let countryMarkers = scatterplot.selectAll(".countryMarkers")
+        countryMarkers = scatterplot.selectAll(".countryMarkers")
             .data(who)
             .enter()
             .append("g")
@@ -239,6 +240,19 @@
             .attr("dx", 9)
             .attr("y", yMap)
             .attr("dy", 3);
+
+        let scatterZoom = d3.zoom()
+            .scaleExtent([.5, 20])
+            .extent([[0, 0], [scatterWidth, scatterHeight]])
+            .on("zoom", scatterZoomed);
+        
+        scatterSvg.append("rect")
+            .attr("width", scatterWidth)
+            .attr("height", scatterHeight)
+            .style("fill", "none")
+            .style("pointer-events", "all")
+            .attr('transform', 'translate(35, 35)')
+            .call(scatterZoom);
 
         // draw legend
         var legend = scatterplot.append("g").attr("class", "legend-group").selectAll(".legend")
@@ -288,6 +302,15 @@
     function zoomed() {
         mapGroup.selectAll('path')
             .attr('transform', d3.event.transform);
+    }
+
+    function scatterZoomed() {
+        // create new scale ojects based on event
+        var new_xScale = d3.event.transform.rescaleX(xScale);
+        var new_yScale = d3.event.transform.rescaleY(yScale);
+        // update axes
+        gX.call(xAxis.scale(new_xScale));
+        gY.call(yAxis.scale(new_yScale));
     }
 </script>
 </body>
