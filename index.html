@@ -28,10 +28,18 @@
         stroke: black;
     }
 
-    .dot.selected-country{
+    .selected-country > .dot{
         stroke-width: 1;
         stroke: black;
         r: 5;
+    }
+
+    .country-label{
+        visibility: hidden;
+    }
+
+    .selected-country > .country-label{
+        visibility: visible;
     }
 </style>
 <body>
@@ -169,15 +177,27 @@
             .text(fieldYAxis.replace(/_/g, " "));
 
         // draw dots
-        scatterplot.selectAll(".dot")
+        let countryMarkers = scatterplot.selectAll(".countryMarkers")
             .data(who)
-            .enter().append("circle")
-            .attr("class", d => { return "dot COUNTRY-CODE-"+d.id; } )
+            .enter()
+            .append("g")
+            .attr("class", d => { return "country-marker COUNTRY-CODE-"+d.id; } );
+        
+        countryMarkers.append("circle")
+            .attr("class", "dot")
             .attr("r", 3.5)
             .attr("cx", xMap)
             .attr("cy", yMap)
             .style("fill", function(d) { return color(d[fieldColor]);})
             .on('click', onClickCountry);
+        
+        countryMarkers.append("text")
+            .attr("class", "country-label")
+            .text( d => {return d.Country})
+            .attr("x", xMap)
+            .attr("dx", 9)
+            .attr("y", yMap)
+            .attr("dy", 3);
 
         // draw legend
         var legend = scatterplot.append("g").attr("class", "legend-group").selectAll(".legend")
