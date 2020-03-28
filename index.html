@@ -23,9 +23,15 @@
         stroke-width: 0.3;
     }
 
-    .selected-country{
+    .country.selected-country{
         stroke-width: 1;
         stroke: black;
+    }
+
+    .dot.selected-country{
+        stroke-width: 1;
+        stroke: black;
+        r: 5;
     }
 </style>
 <body>
@@ -109,14 +115,20 @@
 				.attr('class', 'countries')
 				.selectAll('path')
 				.data(countries.features)
-				.enter().append('path')
-                .attr("class", d => { return "COUNTRY-CODE-"+d.id;} )
+                .enter().append('path')
+                .attr("class", d => { return "country COUNTRY-CODE-"+d.id;} )
 				.attr('d', path)
 				.style('fill', d => color(fertilityById[d.id]))
 				.style('opacity', 0.8)
 				.on('click', function(d){
+                    let alreadySelected = d3.select(this).classed("selected-country");
                     let country = d3.selectAll(".COUNTRY-CODE-"+d.id);
-                    country.classed("selected-country", true)
+                    if (alreadySelected){
+                        country.classed("selected-country", false)
+                    }
+                    else{
+                        country.classed("selected-country", true)
+                    }
                 });
 
 		svg.append('path')
