@@ -218,6 +218,19 @@
             .attr("fill", "black")
             .attr("visibility", "visible");
 
+        let scatterZoom = d3.zoom()
+            .scaleExtent([.5, 20])
+            .extent([[0, 0], [scatterWidth, scatterHeight]])
+            .on("zoom", scatterZoomed);
+        
+        scatterSvg.append("rect")
+            .attr("width", scatterWidth)
+            .attr("height", scatterHeight)
+            .style("fill", "none")
+            .style("pointer-events", "all")
+            .attr('transform', 'translate(35, 35)')
+            .call(scatterZoom);
+
         // countries on scatterplot 
         countryMarkers = scatterplot.selectAll(".countryMarkers")
             .data(who)
@@ -240,19 +253,6 @@
             .attr("dx", 9)
             .attr("y", yMap)
             .attr("dy", 3);
-
-        let scatterZoom = d3.zoom()
-            .scaleExtent([.5, 20])
-            .extent([[0, 0], [scatterWidth, scatterHeight]])
-            .on("zoom", scatterZoomed);
-        
-        scatterSvg.append("rect")
-            .attr("width", scatterWidth)
-            .attr("height", scatterHeight)
-            .style("fill", "none")
-            .style("pointer-events", "all")
-            .attr('transform', 'translate(35, 35)')
-            .call(scatterZoom);
 
         // draw legend
         var legend = scatterplot.append("g").attr("class", "legend-group").selectAll(".legend")
@@ -311,6 +311,11 @@
         // update axes
         gX.call(xAxis.scale(new_xScale));
         gY.call(yAxis.scale(new_yScale));
+
+        scatterSvg.selectAll(".dot")
+            .attr("transform", d3.event.transform);
+        scatterSvg.selectAll(".country-label")
+            .attr("transform", d3.event.transform);
     }
 </script>
 </body>
