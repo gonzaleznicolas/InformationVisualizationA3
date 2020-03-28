@@ -120,16 +120,7 @@
 				.attr('d', path)
 				.style('fill', d => color(fertilityById[d.id]))
 				.style('opacity', 0.8)
-				.on('click', function(d){
-                    let alreadySelected = d3.select(this).classed("selected-country");
-                    let country = d3.selectAll(".COUNTRY-CODE-"+d.id);
-                    if (alreadySelected){
-                        country.classed("selected-country", false)
-                    }
-                    else{
-                        country.classed("selected-country", true)
-                    }
-                });
+				.on('click', onClickCountry);
 
 		svg.append('path')
 				.datum(topojson.mesh(countries.features, (a, b) => a.id !== b.id))
@@ -186,8 +177,7 @@
             .attr("cx", xMap)
             .attr("cy", yMap)
             .style("fill", function(d) { return color(d[fieldColor]);})
-            .on("mouseover", function(d) {})
-            .on("mouseout", function(d) {});
+            .on('click', onClickCountry);
 
         // draw legend
         var legend = scatterplot.append("g").attr("class", "legend-group").selectAll(".legend")
@@ -223,6 +213,16 @@
             .text(fieldColor);
     });
 
+    function onClickCountry(d){
+        let alreadySelected = d3.select(this).classed("selected-country");
+        let country = d3.selectAll(".COUNTRY-CODE-"+d.id);
+        if (alreadySelected){
+            country.classed("selected-country", false)
+        }
+        else{
+            country.classed("selected-country", true)
+        }
+    }
 </script>
 </body>
 </html>
