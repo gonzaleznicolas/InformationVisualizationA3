@@ -223,13 +223,7 @@
             .extent([[0, 0], [scatterWidth, scatterHeight]])
             .on("zoom", scatterZoomed);
         
-        scatterSvg.append("rect")
-            .attr("width", scatterWidth)
-            .attr("height", scatterHeight)
-            .style("fill", "none")
-            .style("pointer-events", "all")
-            .attr('transform', 'translate(35, 35)')
-            .call(scatterZoom);
+        scatterSvg.call(scatterZoom);
 
         // countries on scatterplot 
         countryMarkers = scatterplot.selectAll(".countryMarkers")
