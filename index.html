@@ -90,6 +90,12 @@
 
 	const path = d3.geoPath().projection(projection);
 
+    const zoom = d3.zoom()
+        .scaleExtent([1, 8])
+        .on('zoom', zoomed);
+
+    let mapGroup;
+
     Promise.all([
         d3.csv('who.csv'),
         d3.json('world_countries.json'),
@@ -125,16 +131,18 @@
         who.forEach(d => { fertilityById[d.id] = +d[fieldColor]; });
         countries.features.forEach(d => { d.population = fertilityById[d.id] });
 
-        mapSvg.append('g')
-				.attr('class', 'countries')
-				.selectAll('path')
-				.data(countries.features)
-                .enter().append('path')
-                .attr("class", d => { return "country COUNTRY-CODE-"+d.id;} )
-				.attr('d', path)
-				.style('fill', d => color(fertilityById[d.id]))
-				.style('opacity', 0.8)
-				.on('click', onClickCountry);
+        mapGroup = mapSvg.append('g');
+        mapSvg.call(zoom);
+
+        mapGroup.attr('class', 'countries')
+            .selectAll('path')
+            .data(countries.features)
+            .enter().append('path')
+            .attr("class", d => { return "country COUNTRY-CODE-"+d.id;} )
+            .attr('d', path)
+            .style('fill', d => color(fertilityById[d.id]))
+            .style('opacity', 0.8)
+            .on('click', onClickCountry);
 
 		mapSvg.append('path')
 				.datum(topojson.mesh(countries.features, (a, b) => a.id !== b.id))
@@ -252,6 +260,11 @@
         else{
             country.classed("selected-country", true)
         }
+    }
+
+    function zoomed() {
+        mapGroup.selectAll('path')
+            .attr('transform', d3.event.transform);
     }
 </script>
 </body>
