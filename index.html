@@ -11,6 +11,10 @@
         font: 10px sans-serif;
     }
 
+    .mapSvg {
+        border: solid 1px black;
+    }
+
     .axis path,
     .axis line {
         fill: none;
@@ -68,6 +72,7 @@
 
 	const mapSvg = d3.select('body')
 			.append('svg')
+            .classed("mapSvg", true)
 			.attr('width', mapWidth)
 			.attr('height', mapHeight);
 
@@ -83,6 +88,7 @@
     const scatterplot = scatterSvg
         .append('g')
         .attr('class', 'scatterplot')
+        .attr("transform", "translate(35,35)");
 
     const projection = d3.geoMercator()
 			.scale((mapWidth - 1) / 2 / Math.PI)
@@ -222,7 +228,7 @@
             .data(color.domain())
             .enter().append("g")
             .attr("class", "legend")
-            .attr("transform", function(d, i) { return "translate(-100," + (i+1) * 20 + ")"; });
+            .attr("transform", function(d, i) { return "translate(-210," + (i+1) * 20 + ")"; });
 
         // draw legend colored rectangles
         legend.append("rect")
@@ -233,7 +239,7 @@
 
         // draw legend text
         legend.append("text")
-            .attr("x", scatterWidth - 3)
+            .attr("x", scatterWidth+60)
             .attr("y", 9)
             .attr("dy", ".35em")
             .style("text-anchor", "end")
