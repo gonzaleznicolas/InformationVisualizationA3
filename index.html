@@ -55,32 +55,38 @@
      *
     **/
 
-	const margin = {top: 0, right: 0, bottom: 0, left: 0};
-	const width = 960 - margin.left - margin.right;
-	const height = 1000 - margin.top - margin.bottom;
+	const mapWidth = 960;
+	const mapHeight = 500;
+
+    const scatterWidth = 600;
+    const scatterHeight = 500;
 
     const color = d3.scaleThreshold()
         .domain([2, 3, 4, 5, 6, 7, 8])
         .range( d3.schemeBlues[7] )
         .unknown(d3.rgb(255,200,200));
 
-	const svg = d3.select('body')
+	const mapSvg = d3.select('body')
 			.append('svg')
-			.attr('width', width)
-			.attr('height', height);
+			.attr('width', mapWidth)
+			.attr('height', mapHeight);
 
-    const map = svg
+    const map = mapSvg
         .append('g')
         .attr('class', 'map');
 
-    const scatterplot = svg
+    const scatterSvg = d3.select('body')
+        .append('svg')
+        .attr('width', scatterWidth)
+        .attr('height', scatterHeight);
+
+    const scatterplot = scatterSvg
         .append('g')
         .attr('class', 'scatterplot')
-        .attr("transform", "translate(100,550)");
 
     const projection = d3.geoMercator()
-			.scale(130)
-			.translate( [width / 2, height / 1.5/2]);
+			.scale((mapWidth - 1) / 2 / Math.PI)
+			.translate([mapWidth/2, mapHeight/2]);
 
 	const path = d3.geoPath().projection(projection);
 
@@ -119,7 +125,7 @@
         who.forEach(d => { fertilityById[d.id] = +d[fieldColor]; });
         countries.features.forEach(d => { d.population = fertilityById[d.id] });
 
-        svg.append('g')
+        mapSvg.append('g')
 				.attr('class', 'countries')
 				.selectAll('path')
 				.data(countries.features)
@@ -130,20 +136,20 @@
 				.style('opacity', 0.8)
 				.on('click', onClickCountry);
 
-		svg.append('path')
+		mapSvg.append('path')
 				.datum(topojson.mesh(countries.features, (a, b) => a.id !== b.id))
 				.attr('class', 'names')
 				.attr('d', path);
 
         // setup x
         var xValue = function(d) { return d[fieldXAxis];}, // data -> value
-            xScale = d3.scaleLinear().range([0, height/2-100]), // value -> display
+            xScale = d3.scaleLinear().range([0, scatterHeight-100]), // value -> display
             xMap = function(d) { return xScale(xValue(d));}, // data -> display
             xAxis = d3.axisBottom().scale(xScale);
 
         // setup y
         var yValue = function(d) { return d[fieldYAxis];}, // data -> value
-            yScale = d3.scaleLinear().range([height/2-100, 0]), // value -> display
+            yScale = d3.scaleLinear().range([scatterHeight-100, 0]), // value -> display
             yMap = function(d) { return yScale(yValue(d));}, // data -> display
             yAxis = d3.axisLeft().scale(yScale);
 
@@ -154,7 +160,7 @@
         // x-axis
         scatterplot.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(0," + (height/2-100) + ")")
+            .attr("transform", "translate(0," + (scatterHeight-100) + ")")
             .call(xAxis)
             .append("text")
             .attr("class", "label")
@@ -212,14 +218,14 @@
 
         // draw legend colored rectangles
         legend.append("rect")
-            .attr("x", width/2 + 4)
+            .attr("x", scatterWidth + 4)
             .attr("width", 18)
             .attr("height", 18)
             .style("fill", (d,i)=> color(d-0.0001));
 
         // draw legend text
         legend.append("text")
-            .attr("x", width/2 - 3)
+            .attr("x", scatterWidth - 3)
             .attr("y", 9)
             .attr("dy", ".35em")
             .style("text-anchor", "end")
@@ -230,7 +236,7 @@
             .attr("class", "legend")
             .attr("transform", "translate(-100,0)")
             .append("text")
-            .attr("x", width/2+22)
+            .attr("x", scatterWidth+22)
             .attr("y", 0)
             .attr("dy", "1.5em")
             .style("text-anchor", "end")
