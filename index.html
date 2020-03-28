@@ -161,7 +161,9 @@
             .attr("x", xScale(8))
             .attr("y", -6)
             .style("text-anchor", "end")
-            .text(fieldXAxis.replace(/_/g, " "));
+            .text(fieldXAxis.replace(/_/g, " "))
+            .attr("fill", "black")
+            .attr("visibility", "visible");
 
         // y-axis
         scatterplot.append("g")
@@ -174,9 +176,11 @@
             .attr("y", yScale(100))
             .attr("dy", "1.5em")
             .style("text-anchor", "end")
-            .text(fieldYAxis.replace(/_/g, " "));
+            .text(fieldYAxis.replace(/_/g, " "))
+            .attr("fill", "black")
+            .attr("visibility", "visible");
 
-        // draw dots
+        // countries on scatterplot 
         let countryMarkers = scatterplot.selectAll(".countryMarkers")
             .data(who)
             .enter()
